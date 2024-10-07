@@ -1,6 +1,6 @@
 # GMime.jl
 
-GMime is a convenient wrapper around the [GMime](https://github.com/jstedfast/gmime) library for parsing email messages in Julia, such as sender, recipient, date, body text, and attachments.​
+GMime is a convenient wrapper around the [GMime](https://github.com/jstedfast/gmime) library for parsing email messages in Julia. It can extract sender, recipient, date, body text, attachments and other email information.
 
 ## Installation
 
