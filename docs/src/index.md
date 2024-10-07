@@ -12,7 +12,7 @@ To install GMime, simply use the Julia package manager:
 
 ## Usage
 
-A small example of parsing the content from an email body:
+Here's a small example of how to parse content from an email body:
 
 ```julia
 using GMime
