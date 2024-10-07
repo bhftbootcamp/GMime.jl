@@ -1,0 +1,11 @@
+name = "GMime"
+uuid = "158299e7-fc4f-4c3e-9fda-ad8bb0e07f1e"
+version = "1.0.0"
+
+[deps]
+Dates = "ade2ca70-3891-5945-98fb-dc099432e06a"
+gmime_jll = "84a963f3-210d-52bd-a31c-8c93a6d2cb5c"
+
+[compat]
+gmime_jll = "3.2.15"
+julia = "1.8"
