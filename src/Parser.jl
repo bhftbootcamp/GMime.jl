@@ -16,13 +16,11 @@ Base.show(io::IO, e::GMimeError) = print(io, e.message)
 """
     EmailAttachment
 
-Email attachment.
-
 ## Fields
-- `name::String`: File name.
-- `encoding::String`: Attachment encoding type.
-- `mime_type::String`: Attachment MIME type.
-- `body::Vector{UInt8}`: Attachment binary data.
+- `name::String`: The attachment's file name.
+- `encoding::String`: The encoding type of the attachment.
+- `mime_type::String`: The attachment's MIME type.
+- `body::Vector{UInt8}`: Binary data of the attachment.
 """
 struct EmailAttachment
     name::String
@@ -47,8 +45,8 @@ Email structure with metadata and attachments.
 ## Fields
   - `from::Vector{String}`: Vector of the email sender(s) addresses.
   - `to::Vector{String}`: Vector of the email recipient(s) addresses.
-  - `date::DateTime`: Date and time of the email sending.
-  - `text_body::Vector{UInt8}`: Binary vector of the email text body.
+  - `date::DateTime`: The date and time the email was sent.
+  - `text_body::Vector{UInt8}`: Binary data of the email's text body.
   - `attachments::Vector{EmailAttachment}`: Vector of the email attachments with metadata.
 """
 struct Email
@@ -210,7 +208,7 @@ end
     parse_email(data::Vector{UInt8}) -> Email
     parse_email(data::String) -> Email
 
-Parse a binary vector or string `data` into a [Email](@ref).
+Parse a binary vector or string `data` into an [Email](@ref).
 
 ## Example
 
