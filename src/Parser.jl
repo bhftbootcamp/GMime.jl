@@ -7,6 +7,8 @@ export EmailAttachment,
 using Dates
 using ..GMime
 
+const DATE_FORMAT = DateFormat("yyyy-mm-dd HH:MM:SS")
+
 struct GMimeError <: Exception
     message::String
 end
@@ -90,7 +92,7 @@ end
 function extract_date(msg::Ptr{GMimeMessage})
     date = g_mime_message_get_date(msg)
     date_string = unsafe_string(g_date_time_format(date, "%Y-%m-%d %H:%M:%S"))
-    return DateTime(date_string, DateFormat("yyyy-mm-dd HH:MM:SS"))
+    return DateTime(date_string, DATE_FORMAT)
 end
 
 function read_text_data(part::Ptr{GMimeObject})
@@ -107,7 +109,7 @@ function read_text_data(part::Ptr{GMimeObject})
 end
 
 function handle_body(::Ptr{GMimeObject}, part::Ptr{GMimeObject}, user_data::Ptr{Vector{UInt8}})
-    mime_type =  g_mime_object_get_content_type(part)
+    mime_type = g_mime_object_get_content_type(part)
 
     # Skip every objects except email text body (text/plain)
     g_mime_content_type_is_type(mime_type, "text", "plain") || return nothing
@@ -267,5 +269,7 @@ end
 function parse_email(data::AbstractString)
     return parse_email(codeunits(data))
 end
+
+precompile(push!, (Vector{EmailAttachment}, EmailAttachment))
 
 end
