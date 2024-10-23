@@ -83,7 +83,9 @@ function extract_addresses(msg::Ptr{GMimeMessage}, addr_type::GMimeAddressType)
 
     for i = 0:size-1
         addr = internet_address_list_get_address(addr_list, i)
-        addrs[i+1] = unsafe_string(internet_address_to_string(addr, C_NULL, true))
+        addr_ptr = internet_address_to_string(addr, C_NULL, true)
+        addrs[i+1] = unsafe_string(addr_ptr)
+        g_free(addr_ptr)
     end
 
     return addrs
@@ -91,8 +93,12 @@ end
 
 function extract_date(msg::Ptr{GMimeMessage})
     date = g_mime_message_get_date(msg)
-    date_string = unsafe_string(g_date_time_format(date, "%Y-%m-%d %H:%M:%S"))
-    return DateTime(date_string, DATE_FORMAT)
+    date_str_ptr = g_date_time_format(date, "%Y-%m-%d %H:%M:%S")
+    try
+        DateTime(unsafe_string(date_str_ptr), DATE_FORMAT)
+    finally
+        g_free(date_str_ptr)
+    end
 end
 
 function read_text_data(part::Ptr{GMimeObject})
@@ -108,7 +114,7 @@ function read_text_data(part::Ptr{GMimeObject})
     return content
 end
 
-function handle_body(::Ptr{GMimeObject}, part::Ptr{GMimeObject}, user_data::Ptr{Vector{UInt8}})
+function handle_body(::Ptr{GMimeObject}, part::Ptr{GMimeObject}, user_data::Ptr{UInt8})
     mime_type = g_mime_object_get_content_type(part)
 
     # Skip every objects except email text body (text/plain)
@@ -126,8 +132,8 @@ end
 
 function extract_text_body(msg::Ptr{GMimeMessage})
     text_body = UInt8[]
-    callback = @cfunction(handle_body, Cvoid, (Ptr{GMimeObject}, Ptr{GMimeObject}, Ptr{Vector{UInt8}}))
-    text_body_ptr = pointer_from_objref(text_body)
+    callback = @cfunction(handle_body, Cvoid, (Ptr{GMimeObject}, Ptr{GMimeObject}, Ptr{UInt8}))
+    text_body_ptr = Ptr{UInt8}(pointer_from_objref(text_body))
     g_mime_message_foreach(msg, callback, text_body_ptr)
     return text_body
 end
@@ -143,7 +149,7 @@ function read_stream_data(stream::Ptr{GMimeStream}, buffer_size::Int64 = 4096)
     return content
 end
 
-function handle_attachment(::Ptr{GMimeObject}, part::Ptr{GMimeObject}, user_data::Ptr{Vector{EmailAttachment}})
+function handle_attachment(::Ptr{GMimeObject}, part::Ptr{GMimeObject}, user_data::Ptr{EmailAttachment})
     mime_type = g_mime_object_get_content_type(part)
 
     # Skip multipart objects and objects that are not attachments
@@ -168,27 +174,30 @@ function handle_attachment(::Ptr{GMimeObject}, part::Ptr{GMimeObject}, user_data
 
     # Read attachment data
     g_mime_stream_filter_add(filtered_stream, filter)
+    g_object_unref(filter)
     attachment_data = read_stream_data(filtered_stream)
+    g_object_unref(filtered_stream)
 
     # Add attachment to the list
     encoding_str = unsafe_string(g_mime_content_encoding_to_string(encoding_type))
-    mime_type_str = unsafe_string(g_mime_content_type_get_mime_type(mime_type))
+    type_str_ptr = g_mime_content_type_get_mime_type(mime_type)
     attachments_list = unsafe_pointer_to_objref(user_data)
-    push!(attachments_list, EmailAttachment(filename, encoding_str, mime_type_str, attachment_data))
+    push!(attachments_list, EmailAttachment(filename, encoding_str, unsafe_string(type_str_ptr), attachment_data))
 
+    g_free(type_str_ptr)
     return nothing
 end
 
 function extract_attachments(msg::Ptr{GMimeMessage})
     attachments = EmailAttachment[]
-    callback = @cfunction(handle_attachment, Cvoid, (Ptr{GMimeObject}, Ptr{GMimeObject}, Ptr{Vector{EmailAttachment}}))
-    attachment_ptr = pointer_from_objref(attachments)
+    callback = @cfunction(handle_attachment, Cvoid, (Ptr{GMimeObject}, Ptr{GMimeObject}, Ptr{EmailAttachment}))
+    attachment_ptr = Ptr{EmailAttachment}(pointer_from_objref(attachments))
     g_mime_message_foreach(msg, callback, attachment_ptr)
     return attachments
 end
 
 function stream_init(data::AbstractVector{UInt8})
-    stream = g_mime_stream_mem_new_with_buffer(pointer(data), length(data))
+    stream = g_mime_stream_mem_new_with_buffer(data, length(data))
     stream == C_NULL && throw(GMimeError("Failed to create memory stream."))
     return stream
 end
