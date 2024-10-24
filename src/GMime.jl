@@ -137,7 +137,8 @@ export g_mime_filter_basic_new
 export g_mime_content_encoding_to_string
 
 export g_object_unref,
-    g_date_time_format
+    g_date_time_format,
+    g_free
 
 export EmailAttachment,
     Email,
@@ -282,7 +283,7 @@ function g_mime_stream_mem_new()
 end
 
 function g_mime_stream_mem_new_with_byte_array(array)
-    return ccall((:g_mime_stream_mem_new_with_byte_array, libgmime), Ptr{GMimeStream}, (Ptr{Vector{UInt8}},), array)
+    return ccall((:g_mime_stream_mem_new_with_byte_array, libgmime), Ptr{GMimeStream}, (Ptr{UInt8},), array)
 end
 
 function g_mime_stream_mem_new_with_buffer(buffer, len)
@@ -591,6 +592,10 @@ end
 
 function g_date_time_format(datetime, format)
     return ccall((:g_date_time_format, libgmime), Ptr{UInt8}, (Ptr{GDateTime}, Ptr{UInt8}), datetime, format)
+end
+
+function g_free(ptr)
+    return ccall((:g_free,  libgmime), Cvoid, (Ptr{Cvoid},), ptr)
 end
 
 include("Parser.jl")

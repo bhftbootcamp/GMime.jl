@@ -1,6 +1,6 @@
 name = "GMime"
 uuid = "158299e7-fc4f-4c3e-9fda-ad8bb0e07f1e"
-version = "1.0.0"
+version = "1.0.1"
 
 [deps]
 Dates = "ade2ca70-3891-5945-98fb-dc099432e06a"
