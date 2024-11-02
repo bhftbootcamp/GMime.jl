@@ -58,4 +58,15 @@ using Test, Dates
         @test !isempty(email.text_body)
         @test isempty(email.attachments)
     end
+
+    @testset "Case №6: more emails" begin
+        @test_nowarn parse_email(read("emails/DSN-bounce.eml"))
+        @test_nowarn parse_email(read("emails/DSN-spam.eml"))
+        @test_nowarn parse_email(read("emails/FBL-auth.eml"))
+        @test_nowarn parse_email(read("emails/NDR-block.eml"))
+        @test_nowarn parse_email(read("emails/non-multipart.eml"))
+        @test_nowarn parse_email(read("emails/parse-attachment.eml"))
+        @test_nowarn parse_email(read("emails/eml_as_attachment.eml"))
+        @test_nowarn parse_email(read("emails/broken_date.eml"))
+    end
 end

@@ -54,7 +54,7 @@ Email structure with metadata and attachments.
 struct Email
     from::Vector{String}
     to::Vector{String}
-    date::DateTime
+    date::Union{Nothing,DateTime}
     text_body::Vector{UInt8}
     attachments::Vector{EmailAttachment}
 end
@@ -63,7 +63,7 @@ function Base.show(io::IO, m::Email)
     println(io, "📧 Email:")
     println(io, "   📤 From: $(join(m.from, ", "))")
     println(io, "   📥 To: $(join(m.to, ", "))")
-    println(io, "   🕒 Date: $(m.date)")
+    println(io, "   🕒 Date: $( isnothing(m.date) ? "-" : m.date)")
     println(io, "   📝 Text size: $(length(m.text_body)) bytes")
 
     if !isempty(m.attachments)
@@ -93,6 +93,7 @@ end
 
 function extract_date(msg::Ptr{GMimeMessage})
     date = g_mime_message_get_date(msg)
+    date == C_NULL && return nothing
     date_str_ptr = g_date_time_format(date, "%Y-%m-%d %H:%M:%S")
     try
         DateTime(unsafe_string(date_str_ptr), DATE_FORMAT)
@@ -101,8 +102,7 @@ function extract_date(msg::Ptr{GMimeMessage})
     end
 end
 
-function read_text_data(part::Ptr{GMimeObject})
-    content_ptr = g_mime_text_part_get_text(part)
+function read_text_data(content_ptr::Ptr{UInt8})
     content = UInt8[]
     offset = 0
     while true
@@ -122,7 +122,7 @@ function handle_body(::Ptr{GMimeObject}, part::Ptr{GMimeObject}, user_data::Ptr{
     g_mime_part_is_attachment(part) && return nothing
 
     # Read text body data
-    content = read_text_data(part)
+    content = read_text_data(g_mime_text_part_get_text(part))
 
     # Add text body
     append!(unsafe_pointer_to_objref(user_data), content)
@@ -149,15 +149,35 @@ function read_stream_data(stream::Ptr{GMimeStream}, buffer_size::Int64 = 4096)
     return content
 end
 
+function handle_submessage(part::Ptr{GMimeObject}, mime_type::Ptr{GMimeContentType}, user_data::Ptr{EmailAttachment})
+    filename_ptr = g_mime_content_type_get_parameter(mime_type, "name")
+    filename = filename_ptr == C_NULL ? "" : unsafe_string(filename_ptr)
+    message = g_mime_message_part_get_message(part)
+    message == C_NULL && throw(GMimeError("Failed to create message from part: $filename."))
+
+    attachment_data = read_text_data(g_mime_object_to_string(message, C_NULL))
+    type_str_ptr = g_mime_content_type_get_mime_type(mime_type)
+    push!(
+        unsafe_pointer_to_objref(user_data), 
+        EmailAttachment(filename, "", unsafe_string(type_str_ptr), attachment_data)
+    )
+    return nothing
+end
+
 function handle_attachment(::Ptr{GMimeObject}, part::Ptr{GMimeObject}, user_data::Ptr{EmailAttachment})
     mime_type = g_mime_object_get_content_type(part)
 
     # Skip multipart objects and objects that are not attachments
     g_mime_content_type_is_type(mime_type, "multipart", "*") && return nothing
+    # Parse a sub-message ("message/rfc822") as an attachment
+    if g_mime_content_type_is_type(mime_type, "message", "rfc822")
+        return handle_submessage(part, mime_type, user_data)
+    end
     g_mime_part_is_attachment(part) || return nothing
 
     # Extract metadata and attachment data
-    filename = unsafe_string(g_mime_part_get_filename(part))
+    filename_ptr = g_mime_part_get_filename(part)
+    filename = filename_ptr == C_NULL ? "" : unsafe_string(filename_ptr)
 
     content_wrapper = g_mime_part_get_content(part)
     content_wrapper == C_NULL && throw(GMimeError("Failed to get content for file: $filename."))
