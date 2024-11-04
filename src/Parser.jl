@@ -155,12 +155,15 @@ function handle_submessage(part::Ptr{GMimeObject}, mime_type::Ptr{GMimeContentTy
     message = g_mime_message_part_get_message(part)
     message == C_NULL && throw(GMimeError("Failed to create message from part: $filename."))
 
-    attachment_data = read_text_data(g_mime_object_to_string(message, C_NULL))
+    string_ptr = g_mime_object_to_string(message, C_NULL)
+    string_ptr == C_NULL && throw(GMimeError("Failed to convert message to string: $filename."))
+    attachment_data = read_text_data(string_ptr)
     type_str_ptr = g_mime_content_type_get_mime_type(mime_type)
     push!(
         unsafe_pointer_to_objref(user_data), 
         EmailAttachment(filename, "", unsafe_string(type_str_ptr), attachment_data)
     )
+    g_free(type_str_ptr)
     return nothing
 end
 

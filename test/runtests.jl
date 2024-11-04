@@ -60,7 +60,8 @@ using Test, Dates
     end
 
     @testset "Case №6: more emails" begin
-        @test_nowarn parse_email(read("emails/missing_date.eml"))
+        email = @test_nowarn parse_email(read("emails/missing_date.eml"))
+        @test isnothing(email.date)
         @test_nowarn parse_email(read("emails/eml_as_attachment.eml"))
     end
 end
