@@ -52,8 +52,8 @@ Email structure with metadata and attachments.
   - `attachments::Vector{EmailAttachment}`: Vector of the email attachments with metadata.
 """
 struct Email
-    from::Vector{String}
-    to::Vector{String}
+    from::Union{Nothing,Vector{String}}
+    to::Union{Nothing,Vector{String}}
     date::Union{Nothing,DateTime}
     text_body::Vector{UInt8}
     attachments::Vector{EmailAttachment}
@@ -78,7 +78,7 @@ end
 
 function extract_addresses(msg::Ptr{GMimeMessage}, addr_type::GMimeAddressType)
     addr_list = g_mime_message_get_addresses(msg, addr_type)
-    addr_list == C_NULL && throw(GMimeError("Failed to get addresses."))
+    addr_list == C_NULL && return nothing
     size = internet_address_list_length(addr_list)
     addrs = Vector{String}(undef, size)
 
