@@ -78,11 +78,13 @@ end
 
 function extract_addresses(msg::Ptr{GMimeMessage}, addr_type::GMimeAddressType)
     addr_list = g_mime_message_get_addresses(msg, addr_type)
+    addr_list == C_NULL && throw(GMimeError("Failed to get addresses."))
     size = internet_address_list_length(addr_list)
     addrs = Vector{String}(undef, size)
 
     for i = 0:size-1
         addr = internet_address_list_get_address(addr_list, i)
+        addr == C_NULL && throw(GMimeError("Failed to get address number $i."))
         addr_ptr = internet_address_to_string(addr, C_NULL, true)
         addrs[i+1] = unsafe_string(addr_ptr)
         g_free(addr_ptr)
@@ -116,6 +118,7 @@ end
 
 function handle_body(::Ptr{GMimeObject}, part::Ptr{GMimeObject}, user_data::Ptr{UInt8})
     mime_type = g_mime_object_get_content_type(part)
+    mime_type == C_NULL && throw(GMimeError("Failed to get content type."))
 
     # Skip every objects except email text body (text/plain)
     g_mime_content_type_is_type(mime_type, "text", "plain") || return nothing
@@ -159,9 +162,10 @@ function handle_submessage(part::Ptr{GMimeObject}, mime_type::Ptr{GMimeContentTy
     string_ptr == C_NULL && throw(GMimeError("Failed to convert message to string: $filename."))
     attachment_data = read_text_data(string_ptr)
     type_str_ptr = g_mime_content_type_get_mime_type(mime_type)
+    type_str = type_str_ptr == C_NULL ? "" : unsafe_string(type_str_ptr)
     push!(
         unsafe_pointer_to_objref(user_data), 
-        EmailAttachment(filename, "", unsafe_string(type_str_ptr), attachment_data)
+        EmailAttachment(filename, "", type_str, attachment_data)
     )
     g_free(type_str_ptr)
     return nothing
@@ -169,6 +173,7 @@ end
 
 function handle_attachment(::Ptr{GMimeObject}, part::Ptr{GMimeObject}, user_data::Ptr{EmailAttachment})
     mime_type = g_mime_object_get_content_type(part)
+    mime_type == C_NULL && throw(GMimeError("Failed to get content type."))
 
     # Skip multipart objects and objects that are not attachments
     g_mime_content_type_is_type(mime_type, "multipart", "*") && return nothing
@@ -202,10 +207,12 @@ function handle_attachment(::Ptr{GMimeObject}, part::Ptr{GMimeObject}, user_data
     g_object_unref(filtered_stream)
 
     # Add attachment to the list
-    encoding_str = unsafe_string(g_mime_content_encoding_to_string(encoding_type))
+    encoding_str_ptr = g_mime_content_encoding_to_string(encoding_type)
+    encoding_str = encoding_str_ptr == C_NULL ? "" : unsafe_string(encoding_str_ptr)
     type_str_ptr = g_mime_content_type_get_mime_type(mime_type)
+    type_str = type_str_ptr == C_NULL ? "" : unsafe_string(type_str_ptr)
     attachments_list = unsafe_pointer_to_objref(user_data)
-    push!(attachments_list, EmailAttachment(filename, encoding_str, unsafe_string(type_str_ptr), attachment_data))
+    push!(attachments_list, EmailAttachment(filename, encoding_str, type_str, attachment_data))
 
     g_free(type_str_ptr)
     return nothing

@@ -62,6 +62,8 @@ using Test, Dates
     @testset "Case №6: more emails" begin
         email = @test_nowarn parse_email(read("emails/missing_date.eml"))
         @test isnothing(email.date)
+        email = @test_nowarn parse_email(read("emails/broken_encoding.eml"))
+        @test isempty(email.attachments[1].encoding)
         @test_nowarn parse_email(read("emails/eml_as_attachment.eml"))
     end
 end
