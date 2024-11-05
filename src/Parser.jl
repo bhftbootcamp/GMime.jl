@@ -25,9 +25,9 @@ Base.show(io::IO, e::GMimeError) = print(io, e.message)
 - `body::Vector{UInt8}`: Binary data of the attachment.
 """
 struct EmailAttachment
-    name::String
-    encoding::String
-    mime_type::String
+    name::Union{Nothing,String}
+    encoding::Union{Nothing,String}
+    mime_type::Union{Nothing,String}
     body::Vector{UInt8}
 end
 
@@ -154,7 +154,7 @@ end
 
 function handle_submessage(part::Ptr{GMimeObject}, mime_type::Ptr{GMimeContentType}, user_data::Ptr{EmailAttachment})
     filename_ptr = g_mime_content_type_get_parameter(mime_type, "name")
-    filename = filename_ptr == C_NULL ? "" : unsafe_string(filename_ptr)
+    filename = filename_ptr == C_NULL ? nothing : unsafe_string(filename_ptr)
     message = g_mime_message_part_get_message(part)
     message == C_NULL && throw(GMimeError("Failed to create message from part: $filename."))
 
@@ -162,10 +162,10 @@ function handle_submessage(part::Ptr{GMimeObject}, mime_type::Ptr{GMimeContentTy
     string_ptr == C_NULL && throw(GMimeError("Failed to convert message to string: $filename."))
     attachment_data = read_text_data(string_ptr)
     type_str_ptr = g_mime_content_type_get_mime_type(mime_type)
-    type_str = type_str_ptr == C_NULL ? "" : unsafe_string(type_str_ptr)
+    type_str = type_str_ptr == C_NULL ? nothing : unsafe_string(type_str_ptr)
     push!(
         unsafe_pointer_to_objref(user_data), 
-        EmailAttachment(filename, "", type_str, attachment_data)
+        EmailAttachment(filename, nothing, type_str, attachment_data)
     )
     g_free(type_str_ptr)
     return nothing
@@ -185,7 +185,7 @@ function handle_attachment(::Ptr{GMimeObject}, part::Ptr{GMimeObject}, user_data
 
     # Extract metadata and attachment data
     filename_ptr = g_mime_part_get_filename(part)
-    filename = filename_ptr == C_NULL ? "" : unsafe_string(filename_ptr)
+    filename = filename_ptr == C_NULL ? nothing : unsafe_string(filename_ptr)
 
     content_wrapper = g_mime_part_get_content(part)
     content_wrapper == C_NULL && throw(GMimeError("Failed to get content for file: $filename."))
@@ -208,9 +208,9 @@ function handle_attachment(::Ptr{GMimeObject}, part::Ptr{GMimeObject}, user_data
 
     # Add attachment to the list
     encoding_str_ptr = g_mime_content_encoding_to_string(encoding_type)
-    encoding_str = encoding_str_ptr == C_NULL ? "" : unsafe_string(encoding_str_ptr)
+    encoding_str = encoding_str_ptr == C_NULL ? nothing : unsafe_string(encoding_str_ptr)
     type_str_ptr = g_mime_content_type_get_mime_type(mime_type)
-    type_str = type_str_ptr == C_NULL ? "" : unsafe_string(type_str_ptr)
+    type_str = type_str_ptr == C_NULL ? nothing : unsafe_string(type_str_ptr)
     attachments_list = unsafe_pointer_to_objref(user_data)
     push!(attachments_list, EmailAttachment(filename, encoding_str, type_str, attachment_data))
 

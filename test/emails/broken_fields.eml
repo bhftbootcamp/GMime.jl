@@ -26,8 +26,8 @@ Content-Type: text/html; charset="UTF-8"
 
 --000000000000df5c490623a10348--
 --000000000000df5c4c0623a1034a
-Content-Type: application/x-zip-compressed; name="=?UTF-8?B?0LDRgNGF0LjQsi56aXA=?="
-Content-Disposition: attachment; filename="=?UTF-8?B?0LDRgNGF0LjQsi56aXA=?="
+Content-Type: 123; name="=?UTF-8?B?0LDRgNGF0LjQsi56aXA=?="
+Content-Disposition: attachment;
 Content-Transfer-Encoding: b
 X-Attachment-Id: f_m1ud1a2f0
 Content-ID: <f_m1ud1a2f0>
