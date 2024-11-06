@@ -164,7 +164,7 @@ function handle_submessage(part::Ptr{GMimeObject}, mime_type::Ptr{GMimeContentTy
 
     type_str_ptr = g_mime_content_type_get_mime_type(mime_type)
     type_str = type_str_ptr == C_NULL ? nothing : unsafe_string(type_str_ptr)
-    
+
     attachment_data = read_text_data(string_ptr)
     push!(unsafe_pointer_to_objref(user_data), EmailAttachment(filename, nothing, type_str, attachment_data))
 
@@ -176,12 +176,14 @@ function handle_attachment(::Ptr{GMimeObject}, part::Ptr{GMimeObject}, user_data
     mime_type = g_mime_object_get_content_type(part)
     mime_type == C_NULL && throw(GMimeError("Failed to get content type."))
 
-    # Skip multipart objects and objects that are not attachments
+    # Skip multipart objects and non-attachment objects
     g_mime_content_type_is_type(mime_type, "multipart", "*") && return nothing
+
     # Parse a sub-message ("message/rfc822") as an attachment
     if g_mime_content_type_is_type(mime_type, "message", "rfc822")
         return handle_submessage(part, mime_type, user_data)
     end
+
     g_mime_part_is_attachment(part) || return nothing
 
     # Extract metadata and attachment data
@@ -212,6 +214,7 @@ function handle_attachment(::Ptr{GMimeObject}, part::Ptr{GMimeObject}, user_data
     encoding_str = encoding_str_ptr == C_NULL ? nothing : unsafe_string(encoding_str_ptr)
     type_str_ptr = g_mime_content_type_get_mime_type(mime_type)
     type_str = type_str_ptr == C_NULL ? nothing : unsafe_string(type_str_ptr)
+
     attachments_list = unsafe_pointer_to_objref(user_data)
     push!(attachments_list, EmailAttachment(filename, encoding_str, type_str, attachment_data))
 
@@ -257,7 +260,7 @@ Parse a binary vector or string `data` into an [Email](@ref).
 ```julia
 julia> email_string = \"\"\"
        MIME-Version: 1.0
-       Date: Tue, 5 Mar 1996 11:00:00 +0300
+       Date: Fri, 7 Mar 1997 17:30:00 +0500
        Message-ID: <CAOU+8LMfxVaPMmigMQE2qTBLSbNdKQVps=Fi0S3X8LnfxT2xee@mail.email.com>
        Subject: Test Message
        From: Test User <username@example.com>
@@ -284,7 +287,7 @@ julia> email = parse_email(email_string)
 📧 Email:
    📤 From: Test User <username@example.com>
    📥 To: Test User <username@example.com>
-   🕒 Date: 1996-03-05T11:00:00
+   🕒 Date: 1997-03-07T17:30:00
    📝 Text size: 39 bytes
    📨 No attachments.
 ```
