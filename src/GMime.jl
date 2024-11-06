@@ -30,6 +30,7 @@ export GMimeStream,
     GMimeParser,
     GMimeObject,
     GMimeMessage,
+    GMimeMessagePart,
     GMimePart,
     GMimeContentType,
     GMimeDataWrapper,
@@ -85,10 +86,12 @@ export g_mime_parser_new,
 
 export g_mime_object_get_header,
     g_mime_object_get_header_list,
-    g_mime_object_get_content_type
+    g_mime_object_get_content_type,
+    g_mime_object_to_string
 
 export g_mime_content_type_get_mime_type,
-    g_mime_content_type_is_type
+    g_mime_content_type_is_type,
+    g_mime_content_type_get_parameter
 
 export g_mime_message_new,
     g_mime_message_get_sender,
@@ -110,6 +113,8 @@ export g_mime_message_new,
     g_mime_message_get_mime_part,
     g_mime_message_foreach,
     g_mime_message_get_body
+
+export g_mime_message_part_get_message
 
 export internet_address_list_length,
     internet_address_list_get_address
@@ -187,6 +192,7 @@ struct GMimeParser          <: GObject end
 struct GMimeObject          <: GObject end
 struct GMimeContentType     <: GObject end
 struct GMimeMessage         <: GObject end
+struct GMimeMessagePart     <: GObject end
 struct InternetAddressList  <: GObject end
 struct InternetAddress      <: GObject end
 struct GMimeFormatOptions   <: GObject end
@@ -394,6 +400,10 @@ function g_mime_object_get_content_type(object)
     return ccall((:g_mime_object_get_content_type, libgmime), Ptr{GMimeContentType}, (Ptr{GMimeObject},), object)
 end
 
+function g_mime_object_to_string(object, options)
+    return ccall((:g_mime_object_to_string, GMime.gmime_jll.libgmime), Ptr{UInt8}, (Ptr{GMimeObject}, Ptr{GMimeFormatOptions}), object, options)
+end
+
 # TODO: Add other object intefraces
 
 #__ GMimeContentType
@@ -404,6 +414,10 @@ end
 
 function g_mime_content_type_is_type(content_type, type, subtype)
     return ccall((:g_mime_content_type_is_type, libgmime), Bool, (Ptr{GMimeContentType}, Ptr{UInt8}, Ptr{UInt8}), content_type, type, subtype)
+end
+
+function g_mime_content_type_get_parameter(content_type, name)
+    return ccall((:g_mime_content_type_get_parameter, libgmime), Ptr{UInt8}, (Ptr{GMimeContentType}, Ptr{UInt8}), content_type, name)
 end
 
 #__ GMimeMessage
@@ -493,6 +507,12 @@ function g_mime_message_get_body(message)
 end
 
 # TODO: Add other message intefraces
+
+#__ GMimeMessagePart
+
+function g_mime_message_part_get_message(part)
+    return ccall((:g_mime_message_part_get_message, libgmime), Ptr{GMimeMessage}, (Ptr{GMimeMessagePart},), part)
+end
 
 #__ InternetAddressList
 

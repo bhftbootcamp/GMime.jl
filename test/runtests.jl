@@ -58,4 +58,13 @@ using Test, Dates
         @test !isempty(email.text_body)
         @test isempty(email.attachments)
     end
+
+    @testset "Case №6: more emails" begin
+        email = @test_nowarn parse_email(read("emails/missing_date.eml"))
+        @test isnothing(email.date)
+        email = @test_nowarn parse_email(read("emails/broken_fields.eml"))
+        @test isnothing(email.attachments[1].encoding)
+        @test isnothing(email.attachments[1].name)
+        @test_nowarn parse_email(read("emails/eml_as_attachment.eml"))
+    end
 end

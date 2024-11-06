@@ -1,0 +1,133 @@
+MIME-Version: 1.0
+Date: Fri, 1 Nov 2020 12:39:14 +0100
+Message-ID: <CAOU+9LMWNNUY-KSuxavLTZ4FHqqqfvXsnLoNExx6UbquAvw-8w@mail.mail.com>
+Subject: test msg attachment
+From: Test Tester <test@test.com>
+To: Test Tester <test@test.com>
+Content-Type: multipart/mixed; boundary="0000000000006ce5b90625d862f8"
+
+--0000000000006ce5b90625d862f8
+Content-Type: multipart/alternative; boundary="0000000000006ce5b60625d862f6"
+
+--0000000000006ce5b60625d862f6
+Content-Type: text/plain; charset="UTF-8"
+
+
+
+--0000000000006ce5b60625d862f6
+Content-Type: text/html; charset="UTF-8"
+
+<div dir="ltr"><br></div>
+
+--0000000000006ce5b60625d862f6--
+--0000000000006ce5b90625d862f8
+Content-Type: text/plain; charset="US-ASCII"; name="file.txt"
+Content-Disposition: attachment; filename="file.txt"
+Content-Transfer-Encoding: base64
+X-Attachment-Id: f_m2ynr4451
+Content-ID: <f_m2ynt1451>
+
+dGV4dA0K
+--0000000000006ce5b90625d862f8
+Content-Type: message/rfc822; name="Email with attachments.eml"
+Content-Disposition: attachment; filename="Email with attachments.eml"
+X-Attachment-Id: f_m2ynbgbn0
+Content-ID: <f_m2yndsbn0>
+
+MIME-Version: 1.0
+Date: Fri, 4 Oct 2020 08:45:22 +0200
+Message-ID: <CAOU+9LMMsU1ntWbmAp965xzp5GPmP46opONK3_AnM9AQJnvPpQ@mail.mail.com>
+Subject: Email with attachments
+From: Test Tester <test@test.com>
+To: Test Tester <test@test.com>
+Content-Type: multipart/mixed; boundary="000000000000df5c4c0623a1034a"
+
+--000000000000df5c4c0623a1034a
+Content-Type: multipart/alternative; boundary="000000000000df5c490623a10348"
+
+--000000000000df5c490623a10348
+Content-Type: text/plain; charset="UTF-8"
+
+Hello,
+
+There are five attachments in this email.
+
+Best Regards,
+Test User
+
+--000000000000df5c490623a10348
+Content-Type: text/html; charset="UTF-8"
+
+<div dir="ltr">Hello,<div><br></div><div>There are five attachments in this email.</div><div><br></div><div>Best Regards,</div><div>Test User</div></div>
+
+--000000000000df5c490623a10348--
+--000000000000df5c4c0623a1034a
+Content-Type: application/x-zip-compressed; name="=?UTF-8?B?0LDRgNGF0LjQsi56aXA=?="
+Content-Disposition: attachment; filename="=?UTF-8?B?0LDRgNGF0LjQsi56aXA=?="
+Content-Transfer-Encoding: base64
+X-Attachment-Id: f_m1es3a2f0
+Content-ID: <f_m1es3a2f0>
+
+UEsDBBQACAAIAAJFRFkAAAAAAAAAAEkAAAAJACAAZmlsZS5qc29uVVQNAAfFjf9mi47/Zrxoq2Z1
+eAsAAQQAAAAABAAAAACr5uVSAAKlssSc0tR4QyUrBaXikqLMvHQlHRQZI6BMWmJOcSqqsDFQ2FDP
+gJerFgBQSwcI/r1olDAAAABJAAAAUEsBAhQDFAAIAAgAAkVEWf69aJQwAAAASQAAAAkAIAAAAAAA
+AAAAALaBAAAAAGZpbGUuanNvblVUDQAHxY3/ZouO/2a8aKtmdXgLAAEEAAAAAAQAAAAAUEsFBgAA
+AAABAAEAVwAAAIcAAAAAAA==
+--000000000000df5c4c0623a1034a
+Content-Type: image/png; name="=?UTF-8?B?5pWw5o2uLnBuZw==?="
+Content-Disposition: attachment; filename="=?UTF-8?B?5pWw5o2uLnBuZw==?="
+Content-Transfer-Encoding: base64
+X-Attachment-Id: f_m1ud1a431
+Content-ID: <f_m1ud1a423>
+
+iVBORw0KGgoAAAANSUhEUgAAAYMAAAEeCAYAAABonHmPAAAAAXNSR0IArs4c6QAAAARnQU1BAACx
+jwv8YQUAAAAJcEhZcwAAHYcAAB2HAY/l8WUAAAO8SURBVHhe7dqxTcRAFEDBvUsoAV1COTRCD2RI
+hPRAHVRDhnRlwPJsDjICCO2ZwH+1zpw8re3D4D/mZQJswvEyAdgxMQBADAAQAwAiBgCIAQBiAEDE
+AAAxAEAMAIgYACAGAIgBABEDAMQAADEAIGIAgBgAIAYARAwAEAMAxACAiAEA47BczqfT7eF4fJ5j
+XFWHu9P5/LLe5Tc9KoDtWE8GheCxcVMZrj/mfFr2ANiP79dE75e5HBV+1gDsw9fJYIyHMedry7c5
+5/2yB8B+rN8M+DPfDIBN8TcRAGIAgBgAEDEAQAwAEAMAIgYAiAEAYgBAxAAAMQBADACIGAAgBgCI
+AQARAwDEAAAxACBiAIAYACAGAEQMABADAMQAgIgBAGIAgBgAEDEAQAwAEAMAIgYAiAEAYgBAxAAA
+MQBADACIGAAgBgCIAQARAwDEAAAxACBiAIAYACAGAEQMABADAMQAgIgBAGIAgBgAEDEAQAwAEAMA
+IgYAiAEAYgBAxAAAMQBADACIGAAgBgCIAQARAwDEAAAxACBiAIAYACAGAEQMABADAMQAgIgBAGIA
+gBgAEDEAQAwAEAMAIgYAiAEAYgBAxAAAMQBADACIGAAgBgCIAQARAwDEAAAxACBiAIAYACAGAEQM
+ABADAMQAgIgBAGIAgBgAEDEAQAwAEAMAIgYAiAEAYgBAxAAAMQBADACIGAAgBgCIAQARAwDEAAAx
+ACBiAIAYACAGAEQMABADAMQAgIgBAGIAgBgAEDEAQAwAEAMAIgYAiAEAYgBAxAAAMQBADACIGAAg
+BgCIAQARAwDEAAAxACBiAIAYACAGAEQMABADAMQAgIgBAGIAgBgAEDEAQAwAEAMAIgYAiAEAYgBA
+xAAAMQBADACIGAAgBgCIAQARAwDEAAAxACBiAIAYACAGAEQMABADAMQAgIgBAGIAgBgAEDEAQAwA
+EAMAIgYAiAEAYgBAxAAAMQBADACIGAAgBgCIAQARAwDEAAAxACBiAIAYACAGAEQMABADAMQAgIgB
+AGIAgBgAEDEAQAwAEAMAIgYAiAEAYgBAxAAAMQBADACIGAAgBgCIAQARAwDEAAAxACBiAIAYACAG
+AEQMABADAMQAgIgBAGIAgBgAEDEAQAwAEAMAIgYAiAEAYgBAxAAAMQBADACIGAAgBgCIAQARAwDE
+AAAxACBiAIAYACAGAEQMABADAMQAgIgBAGIAgBgAEDEAQAwAEAMAIgYAiAEAYgBAxAAAMQBADACI
+GAAgBgCIAQARAwDEAIAxPgG4hhkd1bXyMgAAAABJRU5ErkJggg==
+--000000000000df5c4c0623a1034a
+Content-Type: text/csv; charset="US-ASCII"; name="=?UTF-8?B?642w7J207YSwLmNzdg==?="
+Content-Disposition: attachment; filename="=?UTF-8?B?642w7J207YSwLmNzdg==?="
+Content-Transfer-Encoding: base64
+X-Attachment-Id: f_m1u4ga3p3
+Content-ID: <f_m123d1a3p3>
+
+dGltZSx2YWx1ZQowLjAsMC4wMDAxMjI0MjM4NTUxNTAyMTAyMgowLjAwMSwwLjAwMDI0MjExMTA2
+OTk1MDU3Mjk2CjAuMDAyLDAuMDAwNjI3MDU3MDUxMzE4MzAzNgowLjAwMywwLjAwMDQ4NTUwNDkx
+OTQ0MTg2MzEzCjAuMDA0LC0wLjAwMDE1NzUxMDE2MDEzMDg3MzIyCjAuMDA1LDAuMDAwMTQ0NjU3
+MzExMTQ1MDI5NjMKMC4wMDYsMS43MDgwODk2NDUzOTcyNzMzZS01CjAuMDA3LC0wLjAwMDEyOTE2
+MTM0NTczODg1NDI3CjAuMDA4LC0wLjAwMDQ1Mjk5NzY4MTM5NjQ5OTQ2CjAuMDA5LC0wLjAwMDgz
+NDg0OTMxMzMwNzE5MTMKMC4wMSwtMC4wMDAzMjY5NDkxNTY5ODYxNDU4Ngo=
+--000000000000df5c4c0623a1034a
+Content-Type: application/json; name="file.json"
+Content-Disposition: attachment; filename="file.json"
+Content-Transfer-Encoding: base64
+X-Attachment-Id: f_m1u15mb3i2
+Content-ID: <f_m1udks9i2>
+
+ew0KICAgICJ2YWx1ZV8xIjogInN0cmluZyIsDQogICAgInZhbHVlXzIiOiBmYWxzZSwNCiAgICAi
+dmFsdWVfMyI6IDEuMA0KfQ==
+--000000000000df5c4c0623a1034a
+Content-Type: application/json; name="file.json"
+Content-Disposition: attachment; filename="file.json"
+Content-Transfer-Encoding: base64
+X-Attachment-Id: f_m12b0ogo4
+Content-ID: <f_m1ud1o3fg>
+
+ew0KICAgICJ2YWx1ZV8xIjogInN0cmluZyIsDQogICAgInZhbHVlXzIiOiBmYWxzZQ0KfQ==
+--000000000000df5c4c0623a1034a--
+--0000000000006ce5b90625d862f8--
