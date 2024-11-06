@@ -19,9 +19,9 @@ Base.show(io::IO, e::GMimeError) = print(io, e.message)
     EmailAttachment
 
 ## Fields
-- `name::String`: The attachment's file name.
-- `encoding::String`: The encoding type of the attachment.
-- `mime_type::String`: The attachment's MIME type.
+- `name::Union{Nothing,String}`: The attachment's file name.
+- `encoding::Union{Nothing,String}`: The encoding type of the attachment.
+- `mime_type::Union{Nothing,String}`: The attachment's MIME type.
 - `body::Vector{UInt8}`: Binary data of the attachment.
 """
 struct EmailAttachment
@@ -45,9 +45,9 @@ end
 Email structure with metadata and attachments.
 
 ## Fields
-  - `from::Vector{String}`: Vector of the email sender(s) addresses.
-  - `to::Vector{String}`: Vector of the email recipient(s) addresses.
-  - `date::DateTime`: The date and time the email was sent.
+  - `from::Union{Nothing,Vector{String}}`: Vector of the email sender(s) addresses.
+  - `to::Union{Nothing,Vector{String}}`: Vector of the email recipient(s) addresses.
+  - `date::Union{Nothing,DateTime}`: The date and time the email was sent.
   - `text_body::Vector{UInt8}`: Binary data of the email's text body.
   - `attachments::Vector{EmailAttachment}`: Vector of the email attachments with metadata.
 """
@@ -63,7 +63,7 @@ function Base.show(io::IO, m::Email)
     println(io, "📧 Email:")
     println(io, "   📤 From: $(join(m.from, ", "))")
     println(io, "   📥 To: $(join(m.to, ", "))")
-    println(io, "   🕒 Date: $( isnothing(m.date) ? "-" : m.date)")
+    println(io, "   🕒 Date: $(m.date)")
     println(io, "   📝 Text size: $(length(m.text_body)) bytes")
 
     if !isempty(m.attachments)
@@ -120,7 +120,7 @@ function handle_body(::Ptr{GMimeObject}, part::Ptr{GMimeObject}, user_data::Ptr{
     mime_type = g_mime_object_get_content_type(part)
     mime_type == C_NULL && throw(GMimeError("Failed to get content type."))
 
-    # Skip every objects except email text body (text/plain)
+    # Skip every object except the email text body (text/plain)
     g_mime_content_type_is_type(mime_type, "text", "plain") || return nothing
     g_mime_part_is_attachment(part) && return nothing
 
@@ -155,18 +155,19 @@ end
 function handle_submessage(part::Ptr{GMimeObject}, mime_type::Ptr{GMimeContentType}, user_data::Ptr{EmailAttachment})
     filename_ptr = g_mime_content_type_get_parameter(mime_type, "name")
     filename = filename_ptr == C_NULL ? nothing : unsafe_string(filename_ptr)
+
     message = g_mime_message_part_get_message(part)
     message == C_NULL && throw(GMimeError("Failed to create message from part: $filename."))
 
     string_ptr = g_mime_object_to_string(message, C_NULL)
     string_ptr == C_NULL && throw(GMimeError("Failed to convert message to string: $filename."))
-    attachment_data = read_text_data(string_ptr)
+
     type_str_ptr = g_mime_content_type_get_mime_type(mime_type)
     type_str = type_str_ptr == C_NULL ? nothing : unsafe_string(type_str_ptr)
-    push!(
-        unsafe_pointer_to_objref(user_data),
-        EmailAttachment(filename, nothing, type_str, attachment_data)
-    )
+    
+    attachment_data = read_text_data(string_ptr)
+    push!(unsafe_pointer_to_objref(user_data), EmailAttachment(filename, nothing, type_str, attachment_data))
+
     g_free(type_str_ptr)
     return nothing
 end
@@ -246,8 +247,8 @@ function parse_message(parser::Ptr{GMimeParser})
 end
 
 """
-    parse_email(data::Vector{UInt8}) -> Email
-    parse_email(data::String) -> Email
+    parse_email(data::AbstractVector{UInt8}) -> Email
+    parse_email(data::AbstractString) -> Email
 
 Parse a binary vector or string `data` into an [Email](@ref).
 
