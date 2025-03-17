@@ -63,8 +63,11 @@ julia> email = parse_email(data)
 ```
 
 ## Useful Links
-1. Turn on the IMAP support at email provider cabinet. See this [Gmail](https://support.getmailbird.com/hc/en-us/articles/220106527-Enabling-IMAP-for-Gmail) guide.
-2. Create an app-specific password for your email. See [here](https://support.google.com/accounts/answer/185833?hl=en) for details.
+
+- [gmime](https://github.com/jstedfast/gmime) – Official library repository.  
+- [gmime_jll.jl](https://github.com/JuliaBinaryWrappers/gmime_jll.jl) – Julia wrapper for gmime.  
+- Enable IMAP support in your email provider’s settings. See this [Gmail guide](https://support.getmailbird.com/hc/en-us/articles/220106527-Enabling-IMAP-for-Gmail).  
+- Generate an app-specific password for your email account. See details [here](https://support.google.com/accounts/answer/185833?hl=en).  
 
 ## Contributing
 
