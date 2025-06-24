@@ -7,7 +7,7 @@ GMime is a convenient wrapper around the [GMime](https://github.com/jstedfast/gm
 To install GMime, simply use the Julia package manager:
 
 ```julia
-] add Gmime
+] add GMime
 ```
 
 ## Usage

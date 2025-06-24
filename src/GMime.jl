@@ -598,7 +598,7 @@ function g_mime_filter_basic_new(encoding, encode)
     return ccall((:g_mime_filter_basic_new, libgmime), Ptr{GMimeFilter}, (Ptr{GMimeContentEncoding}, Bool), encoding, encode)
 end
 
-#__ GmimeEncodings
+#__ GMimeEncodings
 
 function g_mime_content_encoding_to_string(encoding)
     return ccall((:g_mime_content_encoding_to_string, libgmime), Ptr{UInt8}, (Ptr{GMimeContentEncoding},), encoding)
