@@ -184,7 +184,7 @@ function extract_date(msg::Ptr{GMimeMessage})
     end
 end
 
-function extract_received_at(hs::HeaderList; options=g_mime_format_options_get_default())
+function extract_received_at(hs::HeaderList; options = g_mime_format_options_get_default())
     received_dts = DateTime[]
     for header in hs
         header.name != "Received" && continue
